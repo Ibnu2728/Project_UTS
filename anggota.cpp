@@ -29,15 +29,32 @@ void menuAnggota() {
             cout << "Masukkan Alamat: ";
             getline(cin, daftar[jumlah].alamat);
 
-            // 🔹 Membuat ID otomatis dari 2 huruf pertama nama + 3 huruf alamat + nomor urut
-            string idNama = daftar[jumlah].nama.substr(0, 2);
-            string idAlamat = daftar[jumlah].alamat.substr(0, 3);
-            daftar[jumlah].id = idNama + idAlamat + to_string(jumlah + 1);
+            int modeID;
+            cout << "\nPilih cara membuat ID:\n";
+            cout << "1. Otomatis (berdasarkan nama & alamat)\n";
+            cout << "2. Input manual\n";
+            cout << "Pilihan: ";
+            cin >> modeID;
+            cin.ignore();
 
-            cout << "✅ ID Anggota otomatis: " << daftar[jumlah].id << endl;
+            if (modeID == 1) {
+                // 🔹 Membuat ID otomatis dari 2 huruf pertama nama + 3 huruf alamat + nomor urut
+                string idNama = daftar[jumlah].nama.substr(0, 2);
+                string idAlamat = daftar[jumlah].alamat.substr(0, 3);
+                daftar[jumlah].id = idNama + idAlamat + to_string(jumlah + 1);
+                cout << "✅ ID Anggota otomatis: " << daftar[jumlah].id << endl;
+            } else if (modeID == 2) {
+                cout << "Masukkan ID manual: ";
+                getline(cin, daftar[jumlah].id);
+            } else {
+                cout << "Pilihan tidak valid, ID dibuat otomatis.\n";
+                string idNama = daftar[jumlah].nama.substr(0, 2);
+                string idAlamat = daftar[jumlah].alamat.substr(0, 3);
+                daftar[jumlah].id = idNama + idAlamat + to_string(jumlah + 1);
+            }
 
             jumlah++;
-            cout << "Anggota berhasil ditambahkan!\n";
+            cout << "✅ Anggota berhasil ditambahkan!\n";
         }
 
         else if (pilih == 2) {
@@ -50,9 +67,6 @@ void menuAnggota() {
                          << daftar[i].nama
                          << " | Alamat: " << daftar[i].alamat
                          << " | ID: " << daftar[i].id << endl;
-
-                    // 🔹 Contoh substring tambahan (3 huruf pertama nama)
-                    cout << "   Awalan Nama: " << daftar[i].nama.substr(0, 3) << endl;
                 }
             }
         }
