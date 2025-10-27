@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <vector>
 #include <ctime>
@@ -15,6 +14,8 @@ struct Simpanan {
     double saldoAkhir;
 };
 
+vector<Simpanan> daftarSimpanan;
+
 // ====================== UTILITAS ======================
 string getTanggalSekarang1() {
     time_t t = time(nullptr);
@@ -27,40 +28,13 @@ string getTanggalSekarang1() {
 }
 
 double ambilSaldoTerakhir(string idAnggota) {
-    ifstream file("simpanan.txt");
-    if (!file.is_open()) return 0.0;
-
-    Simpanan s;
-    string line;
     double saldoTerakhir = 0.0;
-
-    while (getline(file, line)) {
-        stringstream ss(line);
-        getline(ss, s.idSimpanan, ',');
-        getline(ss, s.idAnggota, ',');
-        getline(ss, s.tanggal, ',');
-        getline(ss, s.jenisSimpanan, ',');
-        ss >> s.jumlah;
-        ss.ignore();
-        ss >> s.saldoAkhir;
-
+    for (auto& s : daftarSimpanan) {
         if (s.idAnggota == idAnggota) {
             saldoTerakhir = s.saldoAkhir;
         }
     }
-    file.close();
     return saldoTerakhir;
-}
-
-void simpanKeFile(Simpanan s) {
-    ofstream file("simpanan.txt", ios::app);
-    file << s.idSimpanan << ","
-         << s.idAnggota << ","
-         << s.tanggal << ","
-         << s.jenisSimpanan << ","
-         << s.jumlah << ","
-         << s.saldoAkhir << "\n";
-    file.close();
 }
 
 // 🧾 CETAK STRUK SIMPANAN
@@ -96,34 +70,17 @@ void tambahSimpanan() {
     s.saldoAkhir = saldoSebelum + s.jumlah;
     s.tanggal = getTanggalSekarang1();
 
-    simpanKeFile(s);
+    daftarSimpanan.push_back(s);
+
     cout << "\n✅ Simpanan berhasil dicatat!\n";
     tampilkanStruk(s);
 }
 
 void lihatRiwayatSimpanan() {
-    ifstream file("simpanan.txt");
-    if (!file.is_open()) {
+    if (daftarSimpanan.empty()) {
         cout << "Belum ada data simpanan.\n";
         return;
     }
-
-    vector<Simpanan> list;
-    Simpanan s;
-    string line;
-
-    while (getline(file, line)) {
-        stringstream ss(line);
-        getline(ss, s.idSimpanan, ',');
-        getline(ss, s.idAnggota, ',');
-        getline(ss, s.tanggal, ',');
-        getline(ss, s.jenisSimpanan, ',');
-        ss >> s.jumlah;
-        ss.ignore();
-        ss >> s.saldoAkhir;
-        list.push_back(s);
-    }
-    file.close();
 
     cout << "\n=== RIWAYAT SIMPANAN ===\n";
     cout << "Masukkan ID Anggota untuk filter: ";
@@ -134,7 +91,7 @@ void lihatRiwayatSimpanan() {
     double totalSimpan = 0;
     double saldoAkhir = 0;
 
-    for (auto& i : list) {
+    for (auto& i : daftarSimpanan) {
         if (i.idAnggota == idCari) {
             ditemukan = true;
             cout << "\n----------------------------------\n";
