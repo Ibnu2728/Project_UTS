@@ -120,9 +120,7 @@ void lihatRiwayatPembayaran(const vector<Pembayaran>& dataBayar) {
     }
 }
 
-// ====================== MENU PEMBAYARAN ======================
-void menuPembayaran() {
-    vector<Pembayaran> dataBayar;
+void menuPembayaran(vector<Pembayaran>& dataBayar) {
     int pilih;
     do {
         cout << "\n=== MENU PEMBAYARAN ===\n";
@@ -138,10 +136,4 @@ void menuPembayaran() {
             default: cout << "Pilihan tidak valid.\n";
         }
     } while (pilih != 3);
-}
-
-// ====================== MAIN ======================
-int main() {
-    menuPembayaran();
-    return 0;
 }
