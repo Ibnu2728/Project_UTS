@@ -16,7 +16,7 @@ struct Simpanan {
 };
 
 // ====================== UTILITAS ======================
-string getTanggalSekarang() {
+string getTanggalSekarang1() {
     time_t t = time(nullptr);
     tm* now = localtime(&t);
     stringstream ss;
@@ -94,7 +94,7 @@ void tambahSimpanan() {
 
     double saldoSebelum = ambilSaldoTerakhir(s.idAnggota);
     s.saldoAkhir = saldoSebelum + s.jumlah;
-    s.tanggal = getTanggalSekarang();
+    s.tanggal = getTanggalSekarang1();
 
     simpanKeFile(s);
     cout << "\n✅ Simpanan berhasil dicatat!\n";

@@ -139,9 +139,3 @@ void menuPembayaran() {
         }
     } while (pilih != 3);
 }
-
-// ====================== MAIN ======================
-int main() {
-    menuPembayaran();
-    return 0;
-}
