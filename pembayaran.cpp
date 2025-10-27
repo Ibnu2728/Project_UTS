@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <vector>
 #include <ctime>
@@ -15,7 +14,7 @@ struct Pembayaran {
     double bunga;
     double totalBayar;
     double sisaPinjaman;
-    string status;
+    string status; // "Lunas" atau "Belum Lunas"
 };
 
 // ====================== UTILITAS ======================
@@ -27,20 +26,6 @@ string getTanggalHariIni() {
        << setw(2) << setfill('0') << (now->tm_mon + 1) << "-"
        << setw(2) << setfill('0') << now->tm_mday;
     return ss.str();
-}
-
-void simpanKeFile(Pembayaran p) {
-    ofstream file("pembayaran.txt", ios::app);
-    file << p.idPembayaran << ","
-         << p.idAnggota << ","
-         << p.idPinjaman << ","
-         << p.tanggal << ","
-         << p.jumlahPokok << ","
-         << p.bunga << ","
-         << p.totalBayar << ","
-         << p.sisaPinjaman << ","
-         << p.status << "\n";
-    file.close();
 }
 
 // 🧾 CETAK STRUK LANGSUNG DI TERMINAL
@@ -62,25 +47,18 @@ void tampilkanStruk(Pembayaran p) {
 }
 
 // ====================== FITUR PEMBAYARAN ======================
-void bayarAngsuran() {
+void bayarAngsuran(vector<Pembayaran>& dataBayar) {
     Pembayaran p;
     double denda = 0;
     int hariTerlambat = 0;
 
     cout << "\n=== BAYAR ANGSURAN ===\n";
-    cout << "Masukkan ID Pembayaran  : ";
-    cin >> p.idPembayaran;
-    cout << "Masukkan ID Anggota     : ";
-    cin >> p.idAnggota;
-    cout << "Masukkan ID Pinjaman    : ";
-    cin >> p.idPinjaman;
-    cout << "Masukkan Jumlah Pokok   : ";
-    cin >> p.jumlahPokok;
-    cout << "Masukkan Sisa Pinjaman Sebelum Bayar : ";
-    cin >> p.sisaPinjaman;
-
-    cout << "Masukkan Jumlah Hari Keterlambatan (jika ada): ";
-    cin >> hariTerlambat;
+    cout << "Masukkan ID Pembayaran  : "; cin >> p.idPembayaran;
+    cout << "Masukkan ID Anggota     : "; cin >> p.idAnggota;
+    cout << "Masukkan ID Pinjaman    : "; cin >> p.idPinjaman;
+    cout << "Masukkan Jumlah Pokok   : "; cin >> p.jumlahPokok;
+    cout << "Masukkan Sisa Pinjaman Sebelum Bayar : "; cin >> p.sisaPinjaman;
+    cout << "Masukkan Jumlah Hari Keterlambatan (jika ada): "; cin >> hariTerlambat;
 
     // Hitung bunga dan denda
     p.bunga = 0.02 * p.jumlahPokok; // bunga 2%
@@ -99,43 +77,17 @@ void bayarAngsuran() {
     }
 
     p.tanggal = getTanggalHariIni();
-
-    // Simpan data
-    simpanKeFile(p);
+    dataBayar.push_back(p); // simpan ke memori
 
     cout << "\n✅ Pembayaran berhasil dicatat!\n";
-    tampilkanStruk(p); // tampilkan langsung di terminal
+    tampilkanStruk(p); // tampil langsung
 }
 
-void lihatRiwayatPembayaran() {
-    ifstream file("pembayaran.txt");
-    if (!file.is_open()) {
+void lihatRiwayatPembayaran(const vector<Pembayaran>& dataBayar) {
+    if (dataBayar.empty()) {
         cout << "Belum ada data pembayaran.\n";
         return;
     }
-
-    vector<Pembayaran> list;
-    Pembayaran p;
-    string line;
-
-    while (getline(file, line)) {
-        stringstream ss(line);
-        getline(ss, p.idPembayaran, ',');
-        getline(ss, p.idAnggota, ',');
-        getline(ss, p.idPinjaman, ',');
-        getline(ss, p.tanggal, ',');
-        ss >> p.jumlahPokok;
-        ss.ignore();
-        ss >> p.bunga;
-        ss.ignore();
-        ss >> p.totalBayar;
-        ss.ignore();
-        ss >> p.sisaPinjaman;
-        ss.ignore();
-        getline(ss, p.status, ',');
-        list.push_back(p);
-    }
-    file.close();
 
     cout << "\n=== RIWAYAT PEMBAYARAN ===\n";
     cout << "Masukkan ID Anggota untuk filter: ";
@@ -145,7 +97,7 @@ void lihatRiwayatPembayaran() {
     double totalBayar = 0, totalBunga = 0;
     bool ditemukan = false;
 
-    for (auto& i : list) {
+    for (const auto& i : dataBayar) {
         if (i.idAnggota == idCari) {
             ditemukan = true;
             cout << "\n----------------------------------\n";
@@ -168,21 +120,28 @@ void lihatRiwayatPembayaran() {
     }
 }
 
+// ====================== MENU PEMBAYARAN ======================
 void menuPembayaran() {
+    vector<Pembayaran> dataBayar;
     int pilih;
     do {
         cout << "\n=== MENU PEMBAYARAN ===\n";
         cout << "1. Bayar Angsuran\n";
         cout << "2. Lihat Riwayat Pembayaran\n";
         cout << "3. Kembali ke Menu Utama\n";
-        cout << "Pilih: ";
-        cin >> pilih;
+        cout << "Pilih: "; cin >> pilih;
 
         switch (pilih) {
-            case 1: bayarAngsuran(); break;
-            case 2: lihatRiwayatPembayaran(); break;
+            case 1: bayarAngsuran(dataBayar); break;
+            case 2: lihatRiwayatPembayaran(dataBayar); break;
             case 3: cout << "Kembali ke menu utama...\n"; break;
             default: cout << "Pilihan tidak valid.\n";
         }
     } while (pilih != 3);
+}
+
+// ====================== MAIN ======================
+int main() {
+    menuPembayaran();
+    return 0;
 }
