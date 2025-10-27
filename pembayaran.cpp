@@ -82,7 +82,7 @@ void bayarAngsuran() {
     }
 
     if (!adaPinjaman) {
-        cout << "❌ Anggota tidak punya pinjaman aktif.\n";
+        cout << "Anggota tidak punya pinjaman aktif.\n";
         return;
     }
 
@@ -107,7 +107,7 @@ void bayarAngsuran() {
     p.tanggal = getTanggalHariIni();
     dataBayar.push_back(p);
 
-    cout << "\n✅ Pembayaran berhasil dicatat!\n";
+    cout << "\nPembayaran berhasil dicatat!\n";
     tampilkanStruk(p);
 }
 
