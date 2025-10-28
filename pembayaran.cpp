@@ -5,11 +5,24 @@
 #include <sstream>
 using namespace std;
 
+// ==================== DEKLARASI STRUCT & EXTERN ====================
+struct Anggota {
+    string id;
+    string nama;
+    string alamat;
+    double saldo;
+};
+
 struct Pinjaman {
     string idPinjaman;
     string idAnggota;
+    string tanggal;
     double jumlahPinjaman;
+    double bunga;
+    int lamaCicilan;
+    double totalPinjaman;
     double sisaPinjaman;
+    string status;
 };
 
 struct Pembayaran {
@@ -21,15 +34,15 @@ struct Pembayaran {
     double bunga;
     double totalBayar;
     double sisaPinjaman;
-    string status; // "Lunas" atau "Belum Lunas"
+    string status;
 };
 
-// ====================== GLOBAL VECTOR ======================
-vector<Pinjaman> dataPinjaman;
-vector<Pembayaran> dataBayar;
+extern vector<Pinjaman> dataPinjaman;
+extern vector<Anggota> dataAnggota;
+extern vector<Pembayaran> dataBayar;
 
-// ====================== UTILITAS ======================
-string getTanggalHariIni() {
+// ==================== FUNGSI UTILITAS ====================
+string getTanggalHariIniPembayaran() {  // NAMA DIUBAH
     time_t t = time(nullptr);
     tm* now = localtime(&t);
     stringstream ss;
@@ -39,8 +52,8 @@ string getTanggalHariIni() {
     return ss.str();
 }
 
-// ====================== CETAK STRUK ======================
-void tampilkanStruk(Pembayaran p) {
+// ==================== CETAK STRUK ====================
+void tampilkanStrukPembayaran(Pembayaran p) {  // NAMA DIUBAH
     cout << "\n=====================================\n";
     cout << "          STRUK PEMBAYARAN          \n";
     cout << "=====================================\n";
@@ -57,7 +70,7 @@ void tampilkanStruk(Pembayaran p) {
     cout << "=====================================\n";
 }
 
-// ====================== FITUR PEMBAYARAN ======================
+// ==================== FITUR PEMBAYARAN ====================
 void bayarAngsuran() {
     Pembayaran p;
     double denda = 0;
@@ -66,16 +79,15 @@ void bayarAngsuran() {
     cout << "\n=== BAYAR ANGSURAN ===\n";
     cout << "Masukkan ID Anggota     : "; cin >> p.idAnggota;
 
-    // auto-generate ID Pembayaran berdasarkan jumlah pembayaran
+    // Auto-generate ID Pembayaran
     p.idPembayaran = "BAY" + to_string(dataBayar.size() + 1);
 
-    // cari pinjaman anggota
+    // Cari pinjaman aktif anggota
     bool adaPinjaman = false;
     for (auto& pin : dataPinjaman) {
         if (pin.idAnggota == p.idAnggota && pin.sisaPinjaman > 0) {
             p.idPinjaman = pin.idPinjaman;
             p.sisaPinjaman = pin.sisaPinjaman;
-            p.jumlahPokok = pin.jumlahPinjaman / pin.sisaPinjaman; // contoh pembagian
             adaPinjaman = true;
             break;
         }
@@ -89,6 +101,7 @@ void bayarAngsuran() {
     cout << "Masukkan Jumlah Pokok Bayar   : "; cin >> p.jumlahPokok;
     cout << "Masukkan Jumlah Hari Keterlambatan (jika ada): "; cin >> hariTerlambat;
 
+    // Hitung bunga dan denda
     p.bunga = 0.02 * p.jumlahPokok;
     if (hariTerlambat > 0) {
         denda = hariTerlambat * 0.01 * p.jumlahPokok;
@@ -96,19 +109,26 @@ void bayarAngsuran() {
     }
 
     p.totalBayar = p.jumlahPokok + p.bunga + denda;
-    p.sisaPinjaman -= p.totalBayar;
-    if (p.sisaPinjaman <= 0) {
-        p.status = "Lunas";
-        p.sisaPinjaman = 0;
-    } else {
-        p.status = "Belum Lunas";
+
+    // Update sisa pinjaman di vector global
+    for (auto& pin : dataPinjaman) {
+        if (pin.idPinjaman == p.idPinjaman) {
+            pin.sisaPinjaman -= p.jumlahPokok; // hanya mengurangi pokok
+            if (pin.sisaPinjaman <= 0) {
+                pin.sisaPinjaman = 0;
+                pin.status = "Lunas";
+            }
+            p.sisaPinjaman = pin.sisaPinjaman;
+            p.status = pin.status;
+            break;
+        }
     }
 
-    p.tanggal = getTanggalHariIni();
+    p.tanggal = getTanggalHariIniPembayaran();  // PANGGIL FUNGSI YANG BARU
     dataBayar.push_back(p);
 
     cout << "\nPembayaran berhasil dicatat!\n";
-    tampilkanStruk(p);
+    tampilkanStrukPembayaran(p);  // PANGGIL FUNGSI YANG BARU
 }
 
 void lihatRiwayatPembayaran() {
@@ -148,7 +168,7 @@ void lihatRiwayatPembayaran() {
     }
 }
 
-// ====================== MENU PEMBAYARAN ======================
+// ==================== MENU PEMBAYARAN ====================
 void menuPembayaran() {
     int pilih;
     do {

@@ -1,10 +1,17 @@
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <vector>
 #include <ctime>
 #include <sstream>
 using namespace std;
+
+// ==================== DEKLARASI STRUCT & EXTERN ====================
+struct Anggota {
+    string id;
+    string nama;
+    string alamat;
+    double saldo;
+};
 
 struct Pinjaman {
     string idPinjaman;
@@ -18,8 +25,11 @@ struct Pinjaman {
     string status;
 };
 
-// ====================== UTILITAS ======================
-string getTanggalSekarang() {
+extern vector<Anggota> dataAnggota;
+extern vector<Pinjaman> dataPinjaman;
+
+// ==================== FUNGSI UTILITAS ====================
+string getTanggalSekarangPinjaman() {  // NAMA DIUBAH
     time_t t = time(nullptr);
     tm* now = localtime(&t);
     stringstream ss;
@@ -29,22 +39,8 @@ string getTanggalSekarang() {
     return ss.str();
 }
 
-void simpanKeFile(Pinjaman p) {
-    ofstream file("pinjaman.txt", ios::app);
-    file << p.idPinjaman << ","
-         << p.idAnggota << ","
-         << p.tanggal << ","
-         << p.jumlahPinjaman << ","
-         << p.bunga << ","
-         << p.lamaCicilan << ","
-         << p.totalPinjaman << ","
-         << p.sisaPinjaman << ","
-         << p.status << "\n";
-    file.close();
-}
-
-// 🧾 CETAK STRUK PINJAMAN LANGSUNG DI TERMINAL
-void tampilkanStruk(Pinjaman p) {
+// ==================== CETAK STRUK ====================
+void tampilkanStrukPinjaman(Pinjaman p) {  // NAMA DIUBAH
     cout << "\n=====================================\n";
     cout << "          STRUK PINJAMAN            \n";
     cout << "=====================================\n";
@@ -61,73 +57,60 @@ void tampilkanStruk(Pinjaman p) {
     cout << "=====================================\n";
 }
 
-// ====================== FITUR PINJAMAN ======================
+// ==================== FITUR PINJAMAN ====================
 void ajukanPinjaman() {
+    if (dataAnggota.empty()) {
+        cout << "Belum ada anggota. Tambah anggota dulu.\n";
+        return;
+    }
+
     Pinjaman p;
+    cout << "\n=== DAFTAR ANGGOTA ===\n";
+    for (size_t i = 0; i < dataAnggota.size(); i++) {
+        cout << i + 1 << ". " << dataAnggota[i].nama
+             << " (ID: " << dataAnggota[i].id << ")\n";
+    }
 
-    cout << "\n=== AJUKAN PINJAMAN ===\n";
-    cout << "Masukkan ID Pinjaman     : ";
-    cin >> p.idPinjaman;
-    cout << "Masukkan ID Anggota      : ";
-    cin >> p.idAnggota;
-    cout << "Masukkan Jumlah Pinjaman : ";
-    cin >> p.jumlahPinjaman;
-    cout << "Masukkan Lama Cicilan (bulan): ";
-    cin >> p.lamaCicilan;
+    int pilihan;
+    cout << "Pilih anggota (nomor): "; cin >> pilihan;
+    if (pilihan < 1 || pilihan > dataAnggota.size()) {
+        cout << "Pilihan tidak valid.\n";
+        return;
+    }
 
-    // Hitung bunga 5% dari jumlah pinjaman
+    // Sambungan ke anggota
+    p.idAnggota = dataAnggota[pilihan - 1].id;
+
+    cout << "Masukkan Jumlah Pinjaman : "; cin >> p.jumlahPinjaman;
+    cout << "Masukkan Lama Cicilan (bulan): "; cin >> p.lamaCicilan;
+
+    p.idPinjaman = "PJ" + to_string(dataPinjaman.size() + 1);
     p.bunga = 0.05 * p.jumlahPinjaman;
     p.totalPinjaman = p.jumlahPinjaman + p.bunga;
     p.sisaPinjaman = p.totalPinjaman;
     p.status = "Belum Lunas";
-    p.tanggal = getTanggalSekarang();
+    p.tanggal = getTanggalSekarangPinjaman();  // PANGGIL FUNGSI YANG BARU
 
-    simpanKeFile(p);
+    dataPinjaman.push_back(p);
 
     cout << "\n✅ Pinjaman berhasil dicatat!\n";
-    tampilkanStruk(p);
+    tampilkanStrukPinjaman(p);  // PANGGIL FUNGSI YANG BARU
 }
 
 void lihatDaftarPinjaman() {
-    ifstream file("pinjaman.txt");
-    if (!file.is_open()) {
+    if (dataPinjaman.empty()) {
         cout << "Belum ada data pinjaman.\n";
         return;
     }
 
-    vector<Pinjaman> list;
-    Pinjaman p;
-    string line;
-
-    while (getline(file, line)) {
-        stringstream ss(line);
-        getline(ss, p.idPinjaman, ',');
-        getline(ss, p.idAnggota, ',');
-        getline(ss, p.tanggal, ',');
-        ss >> p.jumlahPinjaman;
-        ss.ignore();
-        ss >> p.bunga;
-        ss.ignore();
-        ss >> p.lamaCicilan;
-        ss.ignore();
-        ss >> p.totalPinjaman;
-        ss.ignore();
-        ss >> p.sisaPinjaman;
-        ss.ignore();
-        getline(ss, p.status, ',');
-        list.push_back(p);
-    }
-    file.close();
-
     cout << "\n=== DAFTAR PINJAMAN ===\n";
     cout << "Masukkan ID Anggota untuk filter: ";
-    string idCari;
-    cin >> idCari;
+    string idCari; cin >> idCari;
 
     bool ditemukan = false;
     double totalPinjaman = 0, totalSisa = 0;
 
-    for (auto& i : list) {
+    for (auto& i : dataPinjaman) {
         if (i.idAnggota == idCari) {
             ditemukan = true;
             cout << "\n----------------------------------\n";
@@ -141,31 +124,29 @@ void lihatDaftarPinjaman() {
         }
     }
 
-    if (!ditemukan) {
-        cout << "Data pinjaman untuk ID tersebut tidak ditemukan.\n";
-    } else {
+    if (!ditemukan) cout << "Data pinjaman untuk ID tersebut tidak ditemukan.\n";
+    else {
         cout << "\n=== RINGKASAN PINJAMAN ===\n";
         cout << "Total Pinjaman : Rp " << totalPinjaman << "\n";
         cout << "Sisa Pinjaman  : Rp " << totalSisa << "\n";
     }
 }
 
-// ====================== MENU PINJAMAN ======================
+// ==================== MENU PINJAMAN ====================
 void menuPinjaman() {
     int pilih;
     do {
         cout << "\n=== MENU PINJAMAN ===\n";
         cout << "1. Ajukan Pinjaman\n";
         cout << "2. Lihat Daftar Pinjaman\n";
-        cout << "3. Kembali ke Menu Utama\n";
-        cout << "Pilih: ";
-        cin >> pilih;
+        cout << "0. Kembali ke Menu Utama\n";
+        cout << "Pilih: "; cin >> pilih;
 
         switch (pilih) {
             case 1: ajukanPinjaman(); break;
             case 2: lihatDaftarPinjaman(); break;
-            case 3: cout << "Kembali ke menu utama...\n"; break;
+            case 0: cout << "Kembali ke menu utama...\n"; break;
             default: cout << "Pilihan tidak valid.\n";
         }
-    } while (pilih != 3);
+    } while (pilih != 0);
 }

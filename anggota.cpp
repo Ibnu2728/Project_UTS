@@ -1,17 +1,20 @@
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
+// ==================== DEKLARASI STRUCT & EXTERN ====================
 struct Anggota {
     string id;
     string nama;
     string alamat;
-    double saldo = 0; // Tambahan: saldo simpanan awal
+    double saldo;
 };
 
+extern vector<Anggota> dataAnggota;
+
+// ==================== MENU ANGGOTA ====================
 void menuAnggota() {
-    static Anggota daftar[100];
-    static int jumlah = 0;
     int pilih;
 
     do {
@@ -27,10 +30,11 @@ void menuAnggota() {
         cin.ignore();
 
         if (pilih == 1) {
+            Anggota a;
             cout << "\nMasukkan Nama: ";
-            getline(cin, daftar[jumlah].nama);
+            getline(cin, a.nama);
             cout << "Masukkan Alamat: ";
-            getline(cin, daftar[jumlah].alamat);
+            getline(cin, a.alamat);
 
             int modeID;
             cout << "\nPilih cara membuat ID:\n";
@@ -41,31 +45,31 @@ void menuAnggota() {
             cin.ignore();
 
             if (modeID == 1) {
-                string idNama = daftar[jumlah].nama.substr(0, 2);
-                string idAlamat = daftar[jumlah].alamat.substr(0, 3);
-                daftar[jumlah].id = idNama + idAlamat + to_string(jumlah + 1);
+                string idNama = a.nama.substr(0, 2);
+                string idAlamat = a.alamat.substr(0, 3);
+                a.id = idNama + idAlamat + to_string(dataAnggota.size() + 1);
             } else {
                 cout << "Masukkan ID manual: ";
-                getline(cin, daftar[jumlah].id);
+                getline(cin, a.id);
             }
 
             cout << "Masukkan saldo awal: Rp ";
-            cin >> daftar[jumlah].saldo;
+            cin >> a.saldo;
             cin.ignore();
 
-            cout << "✅ Anggota berhasil ditambahkan! ID: " << daftar[jumlah].id << "\n";
-            jumlah++;
+            dataAnggota.push_back(a);
+            cout << "✅ Anggota berhasil ditambahkan! ID: " << a.id << "\n";
         }
 
         else if (pilih == 2) {
             cout << "\n=== DAFTAR ANGGOTA ===\n";
-            if (jumlah == 0) cout << "Belum ada anggota.\n";
+            if (dataAnggota.empty()) cout << "Belum ada anggota.\n";
             else {
-                for (int i = 0; i < jumlah; i++) {
-                    cout << i + 1 << ". " << daftar[i].nama
-                         << " | ID: " << daftar[i].id
-                         << " | Alamat: " << daftar[i].alamat
-                         << " | Saldo: Rp " << daftar[i].saldo << endl;
+                for (size_t i = 0; i < dataAnggota.size(); i++) {
+                    cout << i + 1 << ". " << dataAnggota[i].nama
+                         << " | ID: " << dataAnggota[i].id
+                         << " | Alamat: " << dataAnggota[i].alamat
+                         << " | Saldo: Rp " << dataAnggota[i].saldo << endl;
                 }
             }
         }
@@ -75,13 +79,13 @@ void menuAnggota() {
             string cari;
             getline(cin, cari);
             bool ketemu = false;
-            for (int i = 0; i < jumlah; i++) {
-                if (daftar[i].id == cari) {
+            for (auto &a : dataAnggota) {
+                if (a.id == cari) {
                     cout << "\n=== DATA ANGGOTA ===\n";
-                    cout << "Nama   : " << daftar[i].nama << endl;
-                    cout << "Alamat : " << daftar[i].alamat << endl;
-                    cout << "ID     : " << daftar[i].id << endl;
-                    cout << "Saldo  : Rp " << daftar[i].saldo << endl;
+                    cout << "Nama   : " << a.nama << endl;
+                    cout << "Alamat : " << a.alamat << endl;
+                    cout << "ID     : " << a.id << endl;
+                    cout << "Saldo  : Rp " << a.saldo << endl;
                     ketemu = true;
                     break;
                 }
@@ -95,22 +99,20 @@ void menuAnggota() {
             getline(cin, idUbah);
             bool ketemu = false;
 
-            for (int i = 0; i < jumlah; i++) {
-                if (daftar[i].id == idUbah) {
-                    cout << "Nama lama: " << daftar[i].nama << "\nMasukkan nama baru: ";
-                    getline(cin, daftar[i].nama);
-                    cout << "Alamat lama: " << daftar[i].alamat << "\nMasukkan alamat baru: ";
-                    getline(cin, daftar[i].alamat);
-                    cout << "Saldo lama: Rp " << daftar[i].saldo << "\nMasukkan saldo baru: Rp ";
-                    cin >> daftar[i].saldo;
+            for (auto &a : dataAnggota) {
+                if (a.id == idUbah) {
+                    cout << "Nama lama: " << a.nama << "\nMasukkan nama baru: ";
+                    getline(cin, a.nama);
+                    cout << "Alamat lama: " << a.alamat << "\nMasukkan alamat baru: ";
+                    getline(cin, a.alamat);
+                    cout << "Saldo lama: Rp " << a.saldo << "\nMasukkan saldo baru: Rp ";
+                    cin >> a.saldo;
                     cin.ignore();
-
                     cout << "✅ Data berhasil diperbarui!\n";
                     ketemu = true;
                     break;
                 }
             }
-
             if (!ketemu) cout << "❌ ID tidak ditemukan.\n";
         }
 
@@ -120,18 +122,14 @@ void menuAnggota() {
             getline(cin, idHapus);
             bool ketemu = false;
 
-            for (int i = 0; i < jumlah; i++) {
-                if (daftar[i].id == idHapus) {
-                    for (int j = i; j < jumlah - 1; j++) {
-                        daftar[j] = daftar[j + 1];
-                    }
-                    jumlah--;
+            for (size_t i = 0; i < dataAnggota.size(); i++) {
+                if (dataAnggota[i].id == idHapus) {
+                    dataAnggota.erase(dataAnggota.begin() + i);
                     ketemu = true;
                     cout << "✅ Anggota berhasil dihapus!\n";
                     break;
                 }
             }
-
             if (!ketemu) cout << "❌ ID tidak ditemukan.\n";
         }
 

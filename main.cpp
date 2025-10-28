@@ -1,12 +1,62 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
+// ==================== DEKLARASI VARIABEL GLOBAL ====================
+struct Anggota {
+    string id;
+    string nama;
+    string alamat;
+    double saldo;
+};
+
+struct Pinjaman {
+    string idPinjaman;
+    string idAnggota;
+    string tanggal;
+    double jumlahPinjaman;
+    double bunga;
+    int lamaCicilan;
+    double totalPinjaman;
+    double sisaPinjaman;
+    string status;
+};
+
+struct Simpanan {
+    string idSimpanan;
+    string idAnggota;
+    string tanggal;
+    string jenisSimpanan;
+    double jumlah;
+    double saldoAkhir;
+};
+
+struct Pembayaran {
+    string idPembayaran;
+    string idAnggota;
+    string idPinjaman;
+    string tanggal;
+    double jumlahPokok;
+    double bunga;
+    double totalBayar;
+    double sisaPinjaman;
+    string status;
+};
+
+// Variabel global didefinisikan di sini
+vector<Anggota> dataAnggota;
+vector<Pinjaman> dataPinjaman;
+vector<Simpanan> daftarSimpanan;
+vector<Pembayaran> dataBayar;
+
+// ==================== DEKLARASI FUNGSI ====================
 void menuAnggota();
 void menuSimpanan();
 void menuPinjaman();
 void menuPembayaran();
 void menuLaporan();
 
+// ==================== FUNGSI UTAMA ====================
 int main() {
     int pilihan;
     do {
