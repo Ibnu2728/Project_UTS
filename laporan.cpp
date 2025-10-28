@@ -120,7 +120,7 @@ Laporan generateLaporanAnggota() {
 
 // ==================== FUNGSI TAMPILKAN LAPORAN DETAIL ====================
 void tampilkanLaporanSimpananDetail() {
-    cout << "\n📊 [LAPORAN SIMPANAN DETAIL]\n";
+    cout << "\n[LAPORAN SIMPANAN DETAIL]\n";
     cout << "==========================================\n";
     
     if (daftarSimpanan.empty()) {
@@ -144,7 +144,7 @@ void tampilkanLaporanSimpananDetail() {
 }
 
 void tampilkanLaporanPinjamanDetail() {
-    cout << "\n📊 [LAPORAN PINJAMAN DETAIL]\n";
+    cout << "\n[LAPORAN PINJAMAN DETAIL]\n";
     cout << "==========================================\n";
     
     if (dataPinjaman.empty()) {
@@ -173,7 +173,7 @@ void tampilkanLaporanPinjamanDetail() {
 }
 
 void tampilkanLaporanPembayaranDetail() {
-    cout << "\n📊 [LAPORAN PEMBAYARAN DETAIL]\n";
+    cout << "\n[LAPORAN PEMBAYARAN DETAIL]\n";
     cout << "==========================================\n";
     
     if (dataBayar.empty()) {
@@ -198,7 +198,7 @@ void tampilkanLaporanPembayaranDetail() {
 }
 
 void tampilkanLaporanAnggotaDetail() {
-    cout << "\n📊 [LAPORAN ANGGOTA DETAIL]\n";
+    cout << "\n[LAPORAN ANGGOTA DETAIL]\n";
     cout << "==========================================\n";
     
     if (dataAnggota.empty()) {
@@ -243,7 +243,7 @@ void menuLaporan() {
         switch (pilih) {
             case 1: {
                 Laporan simpanan = generateLaporanSimpanan();
-                cout << "\n📄 [LAPORAN SIMPANAN]\n";
+                cout << "\n[LAPORAN SIMPANAN]\n";
                 cout << "Jenis: " << simpanan.jenis << endl;
                 cout << "Jumlah Transaksi : " << simpanan.jumlahTransaksi << endl;
                 cout << "Total Uang       : Rp " << fixed << setprecision(0) << simpanan.totalUang << endl;
@@ -253,7 +253,7 @@ void menuLaporan() {
 
             case 2: {
                 Laporan pinjaman = generateLaporanPinjaman();
-                cout << "\n📄 [LAPORAN PINJAMAN]\n";
+                cout << "\n[LAPORAN PINJAMAN]\n";
                 cout << "Jenis: " << pinjaman.jenis << endl;
                 cout << "Jumlah Peminjam  : " << pinjaman.jumlahTransaksi << endl;
                 cout << "Total Pinjaman   : Rp " << fixed << setprecision(0) << pinjaman.totalUang << endl;
@@ -263,7 +263,7 @@ void menuLaporan() {
 
             case 3: {
                 Laporan pembayaran = generateLaporanPembayaran();
-                cout << "\n📄 [LAPORAN PEMBAYARAN]\n";
+                cout << "\n[LAPORAN PEMBAYARAN]\n";
                 cout << "Jenis: " << pembayaran.jenis << endl;
                 cout << "Jumlah Transaksi : " << pembayaran.jumlahTransaksi << endl;
                 cout << "Total Pembayaran : Rp " << fixed << setprecision(0) << pembayaran.totalUang << endl;
@@ -273,7 +273,7 @@ void menuLaporan() {
 
             case 4: {
                 Laporan anggota = generateLaporanAnggota();
-                cout << "\n📄 [LAPORAN ANGGOTA]\n";
+                cout << "\n[LAPORAN ANGGOTA]\n";
                 cout << "Jenis: " << anggota.jenis << endl;
                 cout << "Jumlah Anggota   : " << anggota.jumlahTransaksi << endl;
                 cout << "Total Saldo      : Rp " << fixed << setprecision(0) << anggota.totalUang << endl;

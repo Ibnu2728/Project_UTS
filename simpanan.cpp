@@ -80,7 +80,7 @@ double ambilSaldoTerakhir(string idAnggota) {
     return saldoTerakhir;
 }
 
-// 🧾 CETAK STRUK SIMPANAN
+// CETAK STRUK SIMPANAN
 void tampilkanStrukSimpanan(Simpanan s) {
     cout << "\n=====================================\n";
     cout << "          STRUK SIMPANAN            \n";
@@ -172,7 +172,7 @@ void tambahSimpanan() {
         }
     }
 
-    cout << "\n✅ Simpanan berhasil dicatat!\n";
+    cout << "\nSimpanan berhasil dicatat!\n";
     tampilkanStrukSimpanan(s);
 }
 

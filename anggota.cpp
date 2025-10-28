@@ -58,7 +58,7 @@ void menuAnggota() {
             cin.ignore();
 
             dataAnggota.push_back(a);
-            cout << "✅ Anggota berhasil ditambahkan! ID: " << a.id << "\n";
+            cout << "Anggota berhasil ditambahkan! ID: " << a.id << "\n";
         }
 
         else if (pilih == 2) {
@@ -90,7 +90,7 @@ void menuAnggota() {
                     break;
                 }
             }
-            if (!ketemu) cout << "❌ Anggota tidak ditemukan.\n";
+            if (!ketemu) cout << "Anggota tidak ditemukan.\n";
         }
 
         else if (pilih == 4) {
@@ -108,12 +108,12 @@ void menuAnggota() {
                     cout << "Saldo lama: Rp " << a.saldo << "\nMasukkan saldo baru: Rp ";
                     cin >> a.saldo;
                     cin.ignore();
-                    cout << "✅ Data berhasil diperbarui!\n";
+                    cout << "Data berhasil diperbarui!\n";
                     ketemu = true;
                     break;
                 }
             }
-            if (!ketemu) cout << "❌ ID tidak ditemukan.\n";
+            if (!ketemu) cout << "ID tidak ditemukan.\n";
         }
 
         else if (pilih == 5) {
@@ -126,11 +126,11 @@ void menuAnggota() {
                 if (dataAnggota[i].id == idHapus) {
                     dataAnggota.erase(dataAnggota.begin() + i);
                     ketemu = true;
-                    cout << "✅ Anggota berhasil dihapus!\n";
+                    cout << "Anggota berhasil dihapus!\n";
                     break;
                 }
             }
-            if (!ketemu) cout << "❌ ID tidak ditemukan.\n";
+            if (!ketemu) cout << "ID tidak ditemukan.\n";
         }
 
     } while (pilih != 0);

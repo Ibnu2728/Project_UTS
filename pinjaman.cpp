@@ -93,7 +93,7 @@ void ajukanPinjaman() {
 
     dataPinjaman.push_back(p);
 
-    cout << "\n✅ Pinjaman berhasil dicatat!\n";
+    cout << "\nPinjaman berhasil dicatat!\n";
     tampilkanStrukPinjaman(p);  // PANGGIL FUNGSI YANG BARU
 }
 
